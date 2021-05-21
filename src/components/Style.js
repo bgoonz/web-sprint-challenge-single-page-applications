@@ -8,8 +8,8 @@ export const StyledHeader = styled.header`
     font-size: 2rem;
   }
   ul {
-    color: white-smoke;
-    font-size: 1.5rem;
+    color:white;
+    font-size:3rem;
   }
   ul li a { color: blue }
 `;

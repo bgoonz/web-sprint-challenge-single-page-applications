@@ -2,36 +2,39 @@ import React, { useState } from 'react';
 import  * as yup from "yup";
 import axios from 'axios';
 
-const reqUri = 'https://reqres.in/api/orders'
+// const reqUri = 'https://reqres.in/api/orders'
+const pizzaSchema = yup.object ().shape ({
+  name: yup
+    .string ()
+    .required ()
+    .min (2, 'your name must have two characters or more'),
+  size: yup.string ().required ().matches (/(small|medium|large)/),
+  pepperoni: yup.bool (),
+  sausage: yup.bool (),
+  'canadian-bacon': yup.bool (),
+  pineapple: yup.bool (),
+  'special-order-instructions': yup.string (),
+});
 
-const initialPizza = {
+const defaultOrder = {
     name: "",
     size: "medium",
     pepperoni:false,
     sausage:false,
     "canadian-bacon":false,
     pineapple:false,
-    "special-text": ""
+    "special-text": "ewwwww"
 }
 
-const pizzaSchema = yup.object().shape({
-    name: yup.string().required().min(2, "name must be at least 2 characters"),
-    size: yup.string().required().matches(/(small|medium|large)/),
-    pepperoni: yup.bool(),
-    sausage: yup.bool(),
-    "canadian-bacon": yup.bool(),
-    pineapple: yup.bool(),
-    "special-text": yup.string(),
-})
 
 
 const PizzaForm = () => {
-    const [curOrder, setCurOrder] = useState(initialPizza)
+    const [curOrder, updateOrder] = useState(defaultOrder)
     const [error, setError] = useState()
 
 
-    const submitClicked = (event) => {
-        event.preventDefault();
+    const submitClicked = (e) => {
+        e.preDefault();
         setError();
         pizzaSchema.validate(curOrder)
         .catch(e => {
@@ -44,27 +47,27 @@ const PizzaForm = () => {
                 console.log('Calling axios with list:\n', curOrder)
                 axios.post("https://reqres.in/api/orders", curOrder)
                     .then(response => console.log('Response:', response))
-                    .catch(err => console.error(err));}})
+                    .catch((error) => console.error(error));}})
     }
 
-    const updateValue = (event) => {
-        setCurOrder({ ...curOrder, [event.target.name]: event.target.value })
+    const updateOrder = (e) => {
+        updateOrder({ ...curOrder, [e.target.name]: e.target.value })
     }
 
-    const toggleTopping = (event) => {
-        setCurOrder(() => {
-            return {...curOrder, [event.target.name]: !curOrder[event.target.name] }
+    const addTopping = (e) => {
+        updateOrder(() => {
+            return {...curOrder, [e.target.name]: !curOrder[e.target.name] }
         });
     }
-    const handleSel = (event) => {
-        setCurOrder({ ...curOrder, [event.target.name]: event.target.value })
+    const handleSel = (e) => {
+        updateOrder({ ...curOrder, [e.target.name]: e.target.value })
     }
 
     return (
         <form id='pizza-form'>
             <label>
                 <b>Name:</b><br/>
-                <input type="text" id='name-input' name="name" value={curOrder.name} onChange={updateValue}></input>
+                <input type="text" id='name-input' name="name" value={curOrder.name} onChange={updateOrder}></input>
             </label><br/>
             <label>
                 <b>Size:</b><br/>
@@ -78,24 +81,24 @@ const PizzaForm = () => {
                 <b>Toppings:</b><br/>
                 <label>
                     Pepperoni:
-                    <input onChange={toggleTopping} type='checkbox' checked={(curOrder.pepperoni === true)} name='pepperoni'></input>
+                    <input onChange={addTopping} type='checkbox' checked={(curOrder.pepperoni === true)} name='pepperoni'></input>
                 </label><br/>
                 <label>
                     Sausage:
-                    <input onChange={toggleTopping} type='checkbox' checked={curOrder.sausage === true} name='sausage'></input>
+                    <input onChange={addTopping} type='checkbox' checked={curOrder.sausage === true} name='sausage'></input>
                 </label><br/>
                 <label>
                     Canadian Bacon:
-                    <input onChange={toggleTopping} type='checkbox' checked={curOrder['canadian-bacon'] === true} name='canadian-bacon'></input>
+                    <input onChange={addTopping} type='checkbox' checked={curOrder['canadian-bacon'] === true} name='canadian-bacon'></input>
                 </label><br/>
                 <label>
                     Pineapple:
-                    <input onChange={toggleTopping} type='checkbox' checked={curOrder.pineapple === true} name='pineapple'></input>
+                    <input onChange={addTopping} type='checkbox' checked={curOrder.pineapple === true} name='pineapple'></input>
                 </label><br/>
             </label>
             <label>
                 <b>Special Instructions</b>:<br/>
-                <input name="special-text" type="text" value={curOrder['special-text']} onChange={updateValue} id="special-text"/><br/>
+                <input name="special-text" type="text" value={curOrder['special-order-instructions']} onChange={updateOrder} id="special-text"/><br/>
             </label>
             <b style={{color: 'red'}}>{error}<br/></b>
             <button id='order-button' onClick={submitClicked}>Submit Order</button>

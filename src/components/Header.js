@@ -1,21 +1,5 @@
 import { useHistory } from "react-router";
-import styled from "styled-components";
-
-const StyledHeader = styled.header`
-  display:flex;
-  justify-content:space-between;
-  background: red;
-  padding: 0 30px 0 30px;
-  align-items: center;
-  h1 {
-    font-size: 3rem;
-  }
-  ul {
-    color: white-smoke;
-    font-size: 1.5rem;
-  }
-  ul li a { color: yellow }
-`
+import { StyledHeader } from './Style';
 
 const Header = () => {
   const history = useHistory();

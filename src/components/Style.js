@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledHeader = styled.header`
+export const headerStyle = styled.header`
   background: red;
   padding: 30px 30px 30px 30px;
   align-items: center;
